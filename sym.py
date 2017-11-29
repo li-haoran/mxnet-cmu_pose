@@ -3,12 +3,11 @@ import mxnet as mx
 from config import config
 
 
-def poseSymbol(num_paf=config.NUM_PAIRS*2,num_part=config.NUM_PARTS,scale=1.0):
+def poseSymbol(num_paf=config.NUM_PAIRS*2,num_part=config.NUM_PARTS,scale=1.0,train=True):
 
-    data = mx.symbol.Variable(name='data')
+    data = mx.symbol.Variable(name='data')   
     
-    heatmaplabel = mx.sym.Variable("heatmaplabel")
-    
+    heatmaplabel = mx.sym.Variable("heatmaplabel")   
     paflabel = mx.sym.Variable('paflabel')
 
     with mx.AttrScope(lr_mult='1'):
@@ -194,38 +193,100 @@ def poseSymbol(num_paf=config.NUM_PAIRS*2,num_part=config.NUM_PARTS,scale=1.0):
         Mconv7_stage6_L1 = mx.symbol.Convolution(name='Mconv7_stage6_L1', data=Mrelu6_stage6_L1 , num_filter=num_paf, pad=(0,0), kernel=(1,1), stride=(1,1), no_bias=False)
         Mconv7_stage6_L2 = mx.symbol.Convolution(name='Mconv7_stage6_L2', data=Mrelu6_stage6_L2 , num_filter=num_part, pad=(0,0), kernel=(1,1), stride=(1,1), no_bias=False)
 
-
-    stage1_loss_L1 = mx.sym.LinearRegressionOutput(data=conv5_5_CPM_L1,label=paflabel,grad_scale=scale,name  = 'stage1_loss_L1')
-    stage1_loss_L2 = mx.sym.LinearRegressionOutput(data=conv5_5_CPM_L2,label=heatmaplabel,grad_scale=scale,name  = 'stage1_loss_L2')
-
-    stage2_loss_L1 = mx.sym.LinearRegressionOutput(data=Mconv7_stage2_L1,label=paflabel,grad_scale=scale,name  = 'stage2_loss_L1')
-    stage2_loss_L2 = mx.sym.LinearRegressionOutput(data=Mconv7_stage2_L2,label=heatmaplabel,grad_scale=scale,name  = 'stage2_loss_L2')
-
-    stage3_loss_L1 = mx.sym.LinearRegressionOutput(data=Mconv7_stage3_L1,label=paflabel,grad_scale=scale,name  = 'stage3_loss_L1')
-    stage3_loss_L2 = mx.sym.LinearRegressionOutput(data=Mconv7_stage3_L2,label=heatmaplabel,grad_scale=scale,name  = 'stage3_loss_L2')
-
-    stage4_loss_L1 = mx.sym.LinearRegressionOutput(data=Mconv7_stage4_L1,label=paflabel,grad_scale=scale,name  = 'stage4_loss_L1')
-    stage4_loss_L2 = mx.sym.LinearRegressionOutput(data=Mconv7_stage4_L2,label=heatmaplabel,grad_scale=scale,name  = 'stage4_loss_L2')
-
-    stage5_loss_L1 = mx.sym.LinearRegressionOutput(data=Mconv7_stage5_L1,label=paflabel,grad_scale=scale,name  = 'stage5_loss_L1')
-    stage5_loss_L2 = mx.sym.LinearRegressionOutput(data=Mconv7_stage5_L2,label=heatmaplabel,grad_scale=scale,name  = 'stage5_loss_L2')
-
-    stage6_loss_L1 = mx.sym.LinearRegressionOutput(data=Mconv7_stage6_L1,label=paflabel,grad_scale=scale,name  = 'stage6_loss_L1')
-    stage6_loss_L2 = mx.sym.LinearRegressionOutput(data=Mconv7_stage6_L2,label=heatmaplabel,grad_scale=scale,name  = 'stage6_loss_L2')
+    if train:
+        stage1_loss_L1 = mx.sym.square(data=conv5_5_CPM_L1-paflabel,name  = 'stage1_loss_L1')   
+        stage1_loss_L2 = mx.sym.square(data=conv5_5_CPM_L2-heatmaplabel,name  = 'stage1_loss_L2')
     
+        stage2_loss_L1 = mx.sym.square(data=Mconv7_stage2_L1-paflabel,name  = 'stage2_loss_L1')
+        stage2_loss_L2 = mx.sym.square(data=Mconv7_stage2_L2-heatmaplabel,grad_scale=scale,name  = 'stage2_loss_L2')
+
+        stage3_loss_L1 = mx.sym.square(data=Mconv7_stage3_L1-paflabel,name  = 'stage3_loss_L1')
+        stage3_loss_L2 = mx.sym.square(data=Mconv7_stage3_L2-heatmaplabel,name  = 'stage3_loss_L2')
+
+        stage4_loss_L1 = mx.sym.square(data=Mconv7_stage4_L1-paflabel,name  = 'stage4_loss_L1')
+        stage4_loss_L2 = mx.sym.square(data=Mconv7_stage4_L2-heatmaplabel,name  = 'stage4_loss_L2')
+
+        stage5_loss_L1 = mx.sym.square(data=Mconv7_stage5_L1-paflabel,name  = 'stage5_loss_L1')
+        stage5_loss_L2 = mx.sym.square(data=Mconv7_stage5_L2-heatmaplabel,name  = 'stage5_loss_L2')
+
+        stage6_loss_L1 = mx.sym.square(data=Mconv7_stage6_L1-paflabel,name  = 'stage6_loss_L1')
+        stage6_loss_L2 = mx.sym.square(data=Mconv7_stage6_L2-heatmaplabel,name  = 'stage6_loss_L2')
+
+        mask=mx.symbol.Variable(name='mask')
+        stage1_loss_L1 = mx.sym.broadcast_mul(stage1_loss_L1,mask,name ='mask_stage1_loss_L1')
+        stage1_loss_L2 = mx.sym.broadcast_mul(stage1_loss_L2,mask,name ='mask_stage1_loss_L2')
+
+        stage2_loss_L1 = mx.sym.broadcast_mul(stage2_loss_L1,mask,name ='mask_stage2_loss_L1')
+        stage2_loss_L2 = mx.sym.broadcast_mul(stage2_loss_L2,mask,name ='mask_stage2_loss_L2')
+
+        stage3_loss_L1 = mx.sym.broadcast_mul(stage3_loss_L1,mask,name ='mask_stage3_loss_L1')
+        stage3_loss_L2 = mx.sym.broadcast_mul(stage3_loss_L2,mask,name ='mask_stage3_loss_L2')
+
+        stage4_loss_L1 = mx.sym.broadcast_mul(stage4_loss_L1,mask,name ='mask_stage4_loss_L1')
+        stage4_loss_L2 = mx.sym.broadcast_mul(stage4_loss_L2,mask,name ='mask_stage4_loss_L2')
+
+        stage5_loss_L1 = mx.sym.broadcast_mul(stage5_loss_L1,mask,name ='mask_stage5_loss_L1')
+        stage5_loss_L2 = mx.sym.broadcast_mul(stage5_loss_L2,mask,name ='mask_stage5_loss_L2')
+
+        stage6_loss_L1 = mx.sym.broadcast_mul(stage6_loss_L1,mask,name ='mask_stage6_loss_L1')
+        stage6_loss_L2 = mx.sym.broadcast_mul(stage6_loss_L2,mask,name ='mask_stage6_loss_L2')
+
+        stage1_loss_L1 = mx.sym.MakeLoss(stage1_loss_L1,grad_scale=scale/(config.NUM_PAIRS*2*config.OUTPUT_SHAPE[0]*config.OUTPUT_SHAPE[1]*2) ,name = 'final_stage1_loss_L1')
+        stage1_loss_L2 = mx.sym.MakeLoss(stage1_loss_L2,grad_scale=scale/(config.NUM_PARTS*config.OUTPUT_SHAPE[0]*config.OUTPUT_SHAPE[1]*2) ,name = 'final_stage1_loss_L2')
+
+        stage2_loss_L1 = mx.sym.MakeLoss(stage2_loss_L1,grad_scale=scale/(config.NUM_PAIRS*2*config.OUTPUT_SHAPE[0]*config.OUTPUT_SHAPE[1]*2) ,name = 'final_stage2_loss_L1')
+        stage2_loss_L2 = mx.sym.MakeLoss(stage2_loss_L2,grad_scale=scale/(config.NUM_PARTS*config.OUTPUT_SHAPE[0]*config.OUTPUT_SHAPE[1]*2) ,name = 'final_stage2_loss_L2')
+
+        stage3_loss_L1 = mx.sym.MakeLoss(stage3_loss_L1,grad_scale=scale/(config.NUM_PAIRS*2*config.OUTPUT_SHAPE[0]*config.OUTPUT_SHAPE[1]*2) ,name = 'final_stage3_loss_L1')
+        stage3_loss_L2 = mx.sym.MakeLoss(stage3_loss_L2,grad_scale=scale/(config.NUM_PARTS*config.OUTPUT_SHAPE[0]*config.OUTPUT_SHAPE[1]*2) ,name = 'final_stage3_loss_L2')
+
+        stage4_loss_L1 = mx.sym.MakeLoss(stage4_loss_L1,grad_scale=scale/(config.NUM_PAIRS*2*config.OUTPUT_SHAPE[0]*config.OUTPUT_SHAPE[1]*2) ,name = 'final_stage4_loss_L1')
+        stage4_loss_L2 = mx.sym.MakeLoss(stage4_loss_L2,grad_scale=scale/(config.NUM_PARTS*config.OUTPUT_SHAPE[0]*config.OUTPUT_SHAPE[1]*2) ,name = 'final_stage4_loss_L2')
+
+        stage5_loss_L1 = mx.sym.MakeLoss(stage5_loss_L1,grad_scale=scale/(config.NUM_PAIRS*2*config.OUTPUT_SHAPE[0]*config.OUTPUT_SHAPE[1]*2) ,name = 'final_stage5_loss_L1')
+        stage5_loss_L2 = mx.sym.MakeLoss(stage5_loss_L2,grad_scale=scale/(config.NUM_PARTS*config.OUTPUT_SHAPE[0]*config.OUTPUT_SHAPE[1]*2) ,name = 'final_stage5_loss_L2')
+
+        stage6_loss_L1 = mx.sym.MakeLoss(stage6_loss_L1,grad_scale=scale/(config.NUM_PAIRS*2*config.OUTPUT_SHAPE[0]*config.OUTPUT_SHAPE[1]*2) ,name = 'final_stage6_loss_L1')
+        stage6_loss_L2 = mx.sym.MakeLoss(stage6_loss_L2,grad_scale=scale/(config.NUM_PARTS*config.OUTPUT_SHAPE[0]*config.OUTPUT_SHAPE[1]*2) ,name = 'final_stage6_loss_L2')
+
+
     
-   
+
+        # stage1_loss_L1 = mx.sym.MakeLoss(stage1_loss_L1,name = 'final_stage1_loss_L1')
+        # stage1_loss_L2 = mx.sym.MakeLoss(stage1_loss_L2,name = 'final_stage1_loss_L2')
+
+        # stage2_loss_L1 = mx.sym.MakeLoss(stage2_loss_L1,name = 'final_stage2_loss_L1')
+        # stage2_loss_L2 = mx.sym.MakeLoss(stage2_loss_L2,name = 'final_stage2_loss_L2')
+
+        # stage3_loss_L1 = mx.sym.MakeLoss(stage3_loss_L1,name = 'final_stage3_loss_L1')
+        # stage3_loss_L2 = mx.sym.MakeLoss(stage3_loss_L2,name = 'final_stage3_loss_L2')
+
+        # stage4_loss_L1 = mx.sym.MakeLoss(stage4_loss_L1,name = 'final_stage4_loss_L1')
+        # stage4_loss_L2 = mx.sym.MakeLoss(stage4_loss_L2,name = 'final_stage4_loss_L2')
+
+        # stage5_loss_L1 = mx.sym.MakeLoss(stage5_loss_L1,name = 'final_stage5_loss_L1')
+        # stage5_loss_L2 = mx.sym.MakeLoss(stage5_loss_L2,name = 'final_stage5_loss_L2')
+
+        # stage6_loss_L1 = mx.sym.MakeLoss(stage6_loss_L1,name = 'final_stage6_loss_L1')
+        # stage6_loss_L2 = mx.sym.MakeLoss(stage6_loss_L2,name = 'final_stage6_loss_L2')
     
-    group = mx.symbol.Group([stage1_loss_L1, stage1_loss_L2,
-                             stage2_loss_L1, stage2_loss_L2,
-                             stage3_loss_L1, stage3_loss_L2,
-                             stage4_loss_L1, stage4_loss_L2,
-                             stage5_loss_L1, stage5_loss_L2,
-                             stage6_loss_L1, stage6_loss_L2])
+        group = mx.symbol.Group([stage1_loss_L1, stage1_loss_L2,
+                                 stage2_loss_L1, stage2_loss_L2,
+                                 stage3_loss_L1, stage3_loss_L2,
+                                 stage4_loss_L1, stage4_loss_L2,
+                                 stage5_loss_L1, stage5_loss_L2,
+                                 stage6_loss_L1, stage6_loss_L2])
+    else:
+        group = mx.symbol.Group([conv5_5_CPM_L1, conv5_5_CPM_L2,
+                                 Mconv7_stage2_L1, Mconv7_stage2_L2,
+                                 Mconv7_stage3_L1, Mconv7_stage3_L2,
+                                 Mconv7_stage4_L1, Mconv7_stage4_L2,
+                                 Mconv7_stage5_L1, Mconv7_stage5_L2,
+                                 Mconv7_stage6_L1, Mconv7_stage6_L2,])
     return group
 
 
 if __name__ =='__main__':
     sym=poseSymbol()
-    data_shape_dict = {'data':(1,3,320,320),'paflabel':(1,20,40,40),'heatmaplabel':(1,10,40,40)}
+    data_shape_dict = {'data':(1,3,320,320),'mask':(1,1,40,40),'paflabel':(1,32,40,40),'heatmaplabel':(1,14,40,40)}
     mx.viz.plot_network(sym, shape=data_shape_dict).view()

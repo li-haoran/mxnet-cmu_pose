@@ -4,6 +4,7 @@ from utils import Image_augment
 from utils import do_flip
 from utils import visual
 from config import config
+import cv2
 
 class POSEIter(mx.io.DataIter):
     def __init__(self,annotations,batch_size,shuffle=True,ctx=mx.gpu(0)):
@@ -12,7 +13,7 @@ class POSEIter(mx.io.DataIter):
         self.shuffle=shuffle
         self.length=len(annotations)
         self.index=range(self.length)
-        self.data_names=['data',]
+        self.data_names=['data','mask',]
         self.label_names=['paflabel','heatmaplabel',]
         self.cur=0
         self.ctx=ctx
@@ -55,6 +56,7 @@ class POSEIter(mx.io.DataIter):
 
         img_list=[]
         pose_list=[]
+        mask_list=[]
         for id_in_this_batch,id in enumerate(batch_ind):
             img_path=self.annotations[id]['image']
             img,mat=Image_augment(img_path)
@@ -84,20 +86,45 @@ class POSEIter(mx.io.DataIter):
             final_pose=np.concatenate([new_pose,visible],axis=2)
             assert final_pose.shape[2]==3 and final_pose.shape[1]==config.NUM_PARTS,'shape error'
             final_pose=final_pose.reshape((num_pose,config.NUM_PARTS*3))
-            
+            #------------------------- generate mask for trainging---------
+            mask_all=np.zeros(config.OUTPUT_SHAPE,dtype=np.float32)
+            for i in range(num_pose):
+                points=new_pose[i,visible[i,:,0]>0.5,:].astype(np.int32)
+                if points.shape[0]<1:
+                    continue
+                if config.MASK_TYPE=='polygon':
+                    if points.shape[0]<=2:
+                        continue                  
+                    b=cv2.convexHull(points)
+                    mask_all=cv2.fillConvexPoly(mask_all ,b,1)
+                else:
+                    x0=max(np.min(points[:,0])-1,0)
+                    x1=min(np.max(points[:,0])+1,config.OUTPUT_SHAPE[1])
+                    y0=max(np.min(points[:,1])-1,0)
+                    y1=min(np.max(points[:,1])+1,config.OUTPUT_SHAPE[0])
+                    mask_all[y0:y1,x0:x1]=1
+            #if config.VISUAL:
+            #    import matplotlib.pyplot as plt
+            #    temp=cv2.resize(img,(46,46))
+            #    plt.imshow(np.uint8(temp))
+            #    plt.imshow(mask_all,alpha=0.5)
+            #    plt.show()
+            #--------------------------------------------------------------
+
             batch_pose=np.zeros((num_pose,config.NUM_PARTS*3+1),dtype = np.float32)
             batch_pose[:,0]=id_in_this_batch
             batch_pose[:,1:]=final_pose
 
 
             #-------------------img processing------------------------------
-            img=img-self.reshape_mean#/256.0-0.5#
+            img=img/256.0-0.5#-self.reshape_mean#
             img=img.transpose((2,0,1))
             img=np.expand_dims(img,axis=0)
 
             img_list.append(img)
             pose_list.append(batch_pose)
-        self.data=[mx.nd.array(np.vstack(img_list),self.ctx),]
+            mask_list.append(mask_all.reshape((1,1,config.OUTPUT_SHAPE[0],config.OUTPUT_SHAPE[1])))
+        self.data=[mx.nd.array(np.vstack(img_list),self.ctx),mx.nd.array(np.vstack(mask_list),self.ctx),]
         
         pose=mx.nd.array(np.vstack(pose_list),self.ctx)
         paflabel=mx.nd.PARTAffineField(pose,output_shape=config.OUTPUT_SHAPE,pair_config=config.PAIR_CONFIGS,
@@ -106,7 +133,7 @@ class POSEIter(mx.io.DataIter):
         pose=mx.nd.array(np.vstack(pose_list),self.ctx)
         heatmaplabel=mx.nd.HEATMap(pose,output_shape=config.OUTPUT_SHAPE,sigma=config.SIGMA,num_parts=config.NUM_PARTS,batch_size=self.batch_size)
         heatmaplabel.wait_to_read()
-        self.label=[paflabel,heatmaplabel]
+        self.label=[paflabel,heatmaplabel,]
         #if config.VISUAL:
         #    import matplotlib.pyplot as plt
 

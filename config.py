@@ -11,18 +11,19 @@ config.ANGLE_RANGE = (-20,20)
 config.SCALE_RANGE = (0.75,1.25)
 config.NOISE_VALUE = 10
 config.BRIGHTEN = 10
-config.RGB_MEAN =(123.68, 116.779, 103.939)# (128,128,128)#
+config.RGB_MEAN = (128,128,128)#(123.68, 116.779, 103.939)#
 config.DO_FLIP=True
 config.SWAP_LEFT_RIGHT=True
 config.LEFT=(5,6,7,11,12,13)
 config.RIGHT=(2,3,4,8,9,10)
 
+config.MASK_TYPE='rect'#'polygon'#
 config.VISUAL=True
 ## for paf and heatmap
 config.OUTPUT_SHAPE=(46,46)
 config.DS_SCALE=8.0
-config.BEAM_WIDTH=0.5
-config.SIGMA=1.5
+config.BEAM_WIDTH=0.2
+config.SIGMA=2
 config.NUM_PARTS=14
 config.NUM_PAIRS=16
 config.PART_LABELS=['head', 'neck', 'Rsho', 'Relb', 'Rwri', 'Lsho', 'Lelb', 'Lwri','Rhip', 'Rkne', 'Rank','Lhip', 'Lkne', 'Lank']

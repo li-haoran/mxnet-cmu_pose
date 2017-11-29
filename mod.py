@@ -14,7 +14,7 @@ class poseMod(object):
         self.context=context
 
         self.sym=poseSymbol(scale=1.0/self.batch_size)
-        self.mod=mx.mod.Module(self.sym,data_names=['data',],label_names=['paflabel','heatmaplabel'],context=self.context)
+        self.mod=mx.mod.Module(self.sym,data_names=['data','mask',],label_names=['paflabel','heatmaplabel',],context=self.context)
         self.mod.bind(data_shapes=self.data_shape,label_shapes=self.label_shape,for_training=True)
 
 
@@ -39,11 +39,15 @@ class poseMod(object):
                                'wd':  0.00005,
                                'learning_rate':lr,
                                'lr_scheduler':lr_schedule}
+            print 'using sgd optimizer'
+            print 'optimal prarams:',optimizer_params
         elif optim=='adam':
-            optimizer_params={ 'beta1':0.5,
+            optimizer_params={ 'beta1':0.9,
                                'wd':  0.00005,
                                'learning_rate':lr,
                                'lr_scheduler':lr_schedule}
+            print 'using adam optimizer'
+            print 'optimal prarams:',optimizer_params
 
         self.mod.init_optimizer(optimizer=optim,optimizer_params=optimizer_params)
         print 'init params successfully'
@@ -67,7 +71,7 @@ class poseMod(object):
                 output=self.mod.get_outputs()
                 self.mod.backward()
                 self.mod.update()
-                eval_metric.update(batch.label,output)
+                eval_metric.update(output)
                 #mon.toc_print()
                 if (i+1)%5==0:
                     name,value=eval_metric.get()
@@ -92,9 +96,9 @@ class testMod(object):
         self.batch_size=batch_size
         self.context=context
 
-        self.sym=poseSymbol()
-        self.mod=mx.mod.Module(self.sym,data_names=['data',],label_names=['paflabel','heatmaplabel'],context=self.context)
-        self.mod.bind(data_shape=self.data_shape,label_shape=self.label_shape,for_training=False)
+        self.sym=poseSymbol(train=False)
+        self.mod=mx.mod.Module(self.sym,data_names=['data',],label_names=['paflabel','heatmaplabel',],context=self.context)
+        self.mod.bind(data_shapes=self.data_shape,label_shapes=self.label_shape,for_training=False)
         self.mod.load_params(params_path)
 
 
@@ -103,6 +107,7 @@ class testMod(object):
         output=self.mod.get_outputs()
         paf=[output[i*2].asnumpy() for i in range(6)]
         heatmap=[output[i*2+1].asnumpy() for i in range(6)]
+        return paf,heatmap
         
 
 
