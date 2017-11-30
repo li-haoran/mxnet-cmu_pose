@@ -231,44 +231,44 @@ def poseSymbol(num_paf=config.NUM_PAIRS*2,num_part=config.NUM_PARTS+1,scale=1.0,
         stage6_loss_L1 = mx.sym.broadcast_mul(stage6_loss_L1,mask,name ='mask_stage6_loss_L1')
         stage6_loss_L2 = mx.sym.broadcast_mul(stage6_loss_L2,mask,name ='mask_stage6_loss_L2')
 
-        stage1_loss_L1 = mx.sym.MakeLoss(stage1_loss_L1,grad_scale=scale/(config.NUM_PAIRS*2*config.OUTPUT_SHAPE[0]*config.OUTPUT_SHAPE[1]*2) ,name = 'final_stage1_loss_L1')
-        stage1_loss_L2 = mx.sym.MakeLoss(stage1_loss_L2,grad_scale=scale/(config.NUM_PARTS*config.OUTPUT_SHAPE[0]*config.OUTPUT_SHAPE[1]*2) ,name = 'final_stage1_loss_L2')
+        # stage1_loss_L1 = mx.sym.MakeLoss(stage1_loss_L1,grad_scale=scale/(config.NUM_PAIRS*2*config.OUTPUT_SHAPE[0]*config.OUTPUT_SHAPE[1]*2) ,name = 'final_stage1_loss_L1')
+        # stage1_loss_L2 = mx.sym.MakeLoss(stage1_loss_L2,grad_scale=scale/(config.NUM_PARTS*config.OUTPUT_SHAPE[0]*config.OUTPUT_SHAPE[1]*2) ,name = 'final_stage1_loss_L2')
 
-        stage2_loss_L1 = mx.sym.MakeLoss(stage2_loss_L1,grad_scale=scale/(config.NUM_PAIRS*2*config.OUTPUT_SHAPE[0]*config.OUTPUT_SHAPE[1]*2) ,name = 'final_stage2_loss_L1')
-        stage2_loss_L2 = mx.sym.MakeLoss(stage2_loss_L2,grad_scale=scale/(config.NUM_PARTS*config.OUTPUT_SHAPE[0]*config.OUTPUT_SHAPE[1]*2) ,name = 'final_stage2_loss_L2')
+        # stage2_loss_L1 = mx.sym.MakeLoss(stage2_loss_L1,grad_scale=scale/(config.NUM_PAIRS*2*config.OUTPUT_SHAPE[0]*config.OUTPUT_SHAPE[1]*2) ,name = 'final_stage2_loss_L1')
+        # stage2_loss_L2 = mx.sym.MakeLoss(stage2_loss_L2,grad_scale=scale/(config.NUM_PARTS*config.OUTPUT_SHAPE[0]*config.OUTPUT_SHAPE[1]*2) ,name = 'final_stage2_loss_L2')
 
-        stage3_loss_L1 = mx.sym.MakeLoss(stage3_loss_L1,grad_scale=scale/(config.NUM_PAIRS*2*config.OUTPUT_SHAPE[0]*config.OUTPUT_SHAPE[1]*2) ,name = 'final_stage3_loss_L1')
-        stage3_loss_L2 = mx.sym.MakeLoss(stage3_loss_L2,grad_scale=scale/(config.NUM_PARTS*config.OUTPUT_SHAPE[0]*config.OUTPUT_SHAPE[1]*2) ,name = 'final_stage3_loss_L2')
+        # stage3_loss_L1 = mx.sym.MakeLoss(stage3_loss_L1,grad_scale=scale/(config.NUM_PAIRS*2*config.OUTPUT_SHAPE[0]*config.OUTPUT_SHAPE[1]*2) ,name = 'final_stage3_loss_L1')
+        # stage3_loss_L2 = mx.sym.MakeLoss(stage3_loss_L2,grad_scale=scale/(config.NUM_PARTS*config.OUTPUT_SHAPE[0]*config.OUTPUT_SHAPE[1]*2) ,name = 'final_stage3_loss_L2')
 
-        stage4_loss_L1 = mx.sym.MakeLoss(stage4_loss_L1,grad_scale=scale/(config.NUM_PAIRS*2*config.OUTPUT_SHAPE[0]*config.OUTPUT_SHAPE[1]*2) ,name = 'final_stage4_loss_L1')
-        stage4_loss_L2 = mx.sym.MakeLoss(stage4_loss_L2,grad_scale=scale/(config.NUM_PARTS*config.OUTPUT_SHAPE[0]*config.OUTPUT_SHAPE[1]*2) ,name = 'final_stage4_loss_L2')
+        # stage4_loss_L1 = mx.sym.MakeLoss(stage4_loss_L1,grad_scale=scale/(config.NUM_PAIRS*2*config.OUTPUT_SHAPE[0]*config.OUTPUT_SHAPE[1]*2) ,name = 'final_stage4_loss_L1')
+        # stage4_loss_L2 = mx.sym.MakeLoss(stage4_loss_L2,grad_scale=scale/(config.NUM_PARTS*config.OUTPUT_SHAPE[0]*config.OUTPUT_SHAPE[1]*2) ,name = 'final_stage4_loss_L2')
 
-        stage5_loss_L1 = mx.sym.MakeLoss(stage5_loss_L1,grad_scale=scale/(config.NUM_PAIRS*2*config.OUTPUT_SHAPE[0]*config.OUTPUT_SHAPE[1]*2) ,name = 'final_stage5_loss_L1')
-        stage5_loss_L2 = mx.sym.MakeLoss(stage5_loss_L2,grad_scale=scale/(config.NUM_PARTS*config.OUTPUT_SHAPE[0]*config.OUTPUT_SHAPE[1]*2) ,name = 'final_stage5_loss_L2')
+        # stage5_loss_L1 = mx.sym.MakeLoss(stage5_loss_L1,grad_scale=scale/(config.NUM_PAIRS*2*config.OUTPUT_SHAPE[0]*config.OUTPUT_SHAPE[1]*2) ,name = 'final_stage5_loss_L1')
+        # stage5_loss_L2 = mx.sym.MakeLoss(stage5_loss_L2,grad_scale=scale/(config.NUM_PARTS*config.OUTPUT_SHAPE[0]*config.OUTPUT_SHAPE[1]*2) ,name = 'final_stage5_loss_L2')
 
-        stage6_loss_L1 = mx.sym.MakeLoss(stage6_loss_L1,grad_scale=scale/(config.NUM_PAIRS*2*config.OUTPUT_SHAPE[0]*config.OUTPUT_SHAPE[1]*2) ,name = 'final_stage6_loss_L1')
-        stage6_loss_L2 = mx.sym.MakeLoss(stage6_loss_L2,grad_scale=scale/(config.NUM_PARTS*config.OUTPUT_SHAPE[0]*config.OUTPUT_SHAPE[1]*2) ,name = 'final_stage6_loss_L2')
+        # stage6_loss_L1 = mx.sym.MakeLoss(stage6_loss_L1,grad_scale=scale/(config.NUM_PAIRS*2*config.OUTPUT_SHAPE[0]*config.OUTPUT_SHAPE[1]*2) ,name = 'final_stage6_loss_L1')
+        # stage6_loss_L2 = mx.sym.MakeLoss(stage6_loss_L2,grad_scale=scale/(config.NUM_PARTS*config.OUTPUT_SHAPE[0]*config.OUTPUT_SHAPE[1]*2) ,name = 'final_stage6_loss_L2')
 
 
     
 
-        # stage1_loss_L1 = mx.sym.MakeLoss(stage1_loss_L1,name = 'final_stage1_loss_L1')
-        # stage1_loss_L2 = mx.sym.MakeLoss(stage1_loss_L2,name = 'final_stage1_loss_L2')
+        stage1_loss_L1 = mx.sym.MakeLoss(stage1_loss_L1,name = 'final_stage1_loss_L1')
+        stage1_loss_L2 = mx.sym.MakeLoss(stage1_loss_L2,name = 'final_stage1_loss_L2')
 
-        # stage2_loss_L1 = mx.sym.MakeLoss(stage2_loss_L1,name = 'final_stage2_loss_L1')
-        # stage2_loss_L2 = mx.sym.MakeLoss(stage2_loss_L2,name = 'final_stage2_loss_L2')
+        stage2_loss_L1 = mx.sym.MakeLoss(stage2_loss_L1,name = 'final_stage2_loss_L1')
+        stage2_loss_L2 = mx.sym.MakeLoss(stage2_loss_L2,name = 'final_stage2_loss_L2')
 
-        # stage3_loss_L1 = mx.sym.MakeLoss(stage3_loss_L1,name = 'final_stage3_loss_L1')
-        # stage3_loss_L2 = mx.sym.MakeLoss(stage3_loss_L2,name = 'final_stage3_loss_L2')
+        stage3_loss_L1 = mx.sym.MakeLoss(stage3_loss_L1,name = 'final_stage3_loss_L1')
+        stage3_loss_L2 = mx.sym.MakeLoss(stage3_loss_L2,name = 'final_stage3_loss_L2')
 
-        # stage4_loss_L1 = mx.sym.MakeLoss(stage4_loss_L1,name = 'final_stage4_loss_L1')
-        # stage4_loss_L2 = mx.sym.MakeLoss(stage4_loss_L2,name = 'final_stage4_loss_L2')
+        stage4_loss_L1 = mx.sym.MakeLoss(stage4_loss_L1,name = 'final_stage4_loss_L1')
+        stage4_loss_L2 = mx.sym.MakeLoss(stage4_loss_L2,name = 'final_stage4_loss_L2')
 
-        # stage5_loss_L1 = mx.sym.MakeLoss(stage5_loss_L1,name = 'final_stage5_loss_L1')
-        # stage5_loss_L2 = mx.sym.MakeLoss(stage5_loss_L2,name = 'final_stage5_loss_L2')
+        stage5_loss_L1 = mx.sym.MakeLoss(stage5_loss_L1,name = 'final_stage5_loss_L1')
+        stage5_loss_L2 = mx.sym.MakeLoss(stage5_loss_L2,name = 'final_stage5_loss_L2')
 
-        # stage6_loss_L1 = mx.sym.MakeLoss(stage6_loss_L1,name = 'final_stage6_loss_L1')
-        # stage6_loss_L2 = mx.sym.MakeLoss(stage6_loss_L2,name = 'final_stage6_loss_L2')
+        stage6_loss_L1 = mx.sym.MakeLoss(stage6_loss_L1,name = 'final_stage6_loss_L1')
+        stage6_loss_L2 = mx.sym.MakeLoss(stage6_loss_L2,name = 'final_stage6_loss_L2')
     
         group = mx.symbol.Group([stage1_loss_L1, stage1_loss_L2,
                                  stage2_loss_L1, stage2_loss_L2,
