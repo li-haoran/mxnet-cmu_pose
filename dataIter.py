@@ -131,9 +131,13 @@ class POSEIter(mx.io.DataIter):
                                        beam_width=config.BEAM_WIDTH,num_parts=config.NUM_PARTS,num_pairs=config.NUM_PAIRS,batch_size=self.batch_size)
         paflabel.wait_to_read()
         pose=mx.nd.array(np.vstack(pose_list),self.ctx)
-        heatmaplabel=mx.nd.HEATMap(pose,output_shape=config.OUTPUT_SHAPE,sigma=config.SIGMA,num_parts=config.NUM_PARTS,batch_size=self.batch_size)
-        heatmaplabel.wait_to_read()
-        self.label=[paflabel,heatmaplabel,]
+        fheatmaplabel=mx.nd.HEATMap(pose,output_shape=config.OUTPUT_SHAPE,sigma=config.SIGMA,num_parts=config.NUM_PARTS,batch_size=self.batch_size)
+        fheatmaplabel.wait_to_read()
+        back_ground=np.zeros((self.batch_size,1,config.OUTPUT_SHAPE[0],config.OUTPUT_SHAPE[1]),dtype = np.float32)
+        fheatmaplabel=fheatmaplabel.asnumpy()
+        back_ground=np.maximum(1-np.max(fheatmaplabel,axis=1).reshape((self.batch_size,1,config.OUTPUT_SHAPE[0],config.OUTPUT_SHAPE[1])),back_ground)
+        heatmaplabel=np.concatenate([fheatmaplabel,back_ground],axis=1)
+        self.label=[paflabel,mx.nd.array(heatmaplabel,self.ctx),]
         #if config.VISUAL:
         #    import matplotlib.pyplot as plt
 

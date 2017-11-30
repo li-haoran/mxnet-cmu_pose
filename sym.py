@@ -3,7 +3,7 @@ import mxnet as mx
 from config import config
 
 
-def poseSymbol(num_paf=config.NUM_PAIRS*2,num_part=config.NUM_PARTS,scale=1.0,train=True):
+def poseSymbol(num_paf=config.NUM_PAIRS*2,num_part=config.NUM_PARTS+1,scale=1.0,train=True):
 
     data = mx.symbol.Variable(name='data')   
     

@@ -97,8 +97,8 @@ class testMod(object):
         self.context=context
 
         self.sym=poseSymbol(train=False)
-        self.mod=mx.mod.Module(self.sym,data_names=['data',],label_names=['paflabel','heatmaplabel',],context=self.context)
-        self.mod.bind(data_shapes=self.data_shape,label_shapes=self.label_shape,for_training=False)
+        self.mod=mx.mod.Module(self.sym,data_names=['data',],label_names=[],context=self.context)
+        self.mod.bind(data_shapes=[self.data_shape[0],],for_training=False)
         self.mod.load_params(params_path)
 
 

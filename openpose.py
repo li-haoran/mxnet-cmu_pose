@@ -32,7 +32,7 @@ def test():
     image_set='/home/lihaoran/MPII/images'
     annotation_file='/home/lihaoran/MPII/MPI_annotations.json'
     cache_path='/home/lihaoran/open_pose/data'
-    openpose_params='/home/lihaoran/open_pose/model/OpenPose_vgg19-0001.params'
+    openpose_params='/home/lihaoran/open_pose/model/OpenPose_vgg19-0016.params'
 
     mpii=MPII(image_set,annotation_file,cache_path)
     poses=mpii.gt_roidb()
