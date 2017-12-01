@@ -21,8 +21,14 @@ if optim=='sgd':
     print 'using sgd optimizer'
     print 'optimal prarams:',optimizer_params
 ```
+### trainging speed
+i didn't caculate, the general is 5~6 second 5 batches with batch size 12. i think it is similar to the original code.
 _plot show_
 ![plot?](https://github.com/li-haoran/mxnet-cmu_pose/blob/master/loss/open_pose.png)
+
+## Thanks
+[mxnet_Realtime_Multi-Person_Pose_Estimation](https://github.com/dragonfly90/mxnet_Realtime_Multi-Person_Pose_Estimation) model_file ,and some others.
+[mx-openpose](https://github.com/kohillyang/mx-openpose) mask generation and some others. 
 
 ## Citation
 Please cite the paper in your publications if it helps your research:
