@@ -22,7 +22,7 @@ if optim=='sgd':
     print 'optimal prarams:',optimizer_params
 ```
 _plot show_
-![plot?](https://github.com/li-haoran/mxnet-cmu_pose//blob/master/loss/open_pose.png)
+![plot?](https://github.com/li-haoran/mxnet-cmu_pose/blob/master/loss/open_pose.png)
 
 ## Citation
 Please cite the paper in your publications if it helps your research:
