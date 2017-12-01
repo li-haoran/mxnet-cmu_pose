@@ -7,6 +7,23 @@
 ### Network Architecture
 ![Teaser?](https://github.com/ZheC/Multi-Person-Pose-Estimation/blob/master/readme/arch.png)
 
+
+### training processing
+
+```python
+batch_size=12
+lr_schedule=mx.lr_scheduler.FactorScheduler(step*10,0.333)
+if optim=='sgd':
+    optimizer_params={ 'momentum':0.9,
+                        'wd':  0.00005,
+                        'learning_rate':lr,
+                        'lr_scheduler':lr_schedule}
+    print 'using sgd optimizer'
+    print 'optimal prarams:',optimizer_params
+```
+_plot show_
+![plot?](https://github.com/li-haoran/mxnet-cmu_pose//blob/master/loss/open_pose.png)
+
 ## Citation
 Please cite the paper in your publications if it helps your research:
 
