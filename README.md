@@ -34,6 +34,14 @@ i didn't caculate, the general is 5~6 second 5 batches with batch size 12. i thi
 ![sample1?](https://github.com/li-haoran/mxnet-cmu_pose/blob/master/loss/sample1.png)
 
 ![sample1?](https://github.com/li-haoran/mxnet-cmu_pose/blob/master/loss/sample2.png)
+
+### how to use
+- first download the MPII dataset unzip it 
+  - some tips can refer https://github.com/kohillyang/mx-openpose
+- if you use other dataset, please reimplement the MPII to ***, keep the roi_rec format unchanged. i adopt from VOC
+- if you use other dataset like MSCOCO, the mask may changed, please change the dataiter file from [line_90](https://github.com/li-haoran/mxnet-cmu_pose/blob/master/dataIter.py#L90) to [line_105](https://github.com/li-haoran/mxnet-cmu_pose/blob/master/dataIter.py#L105)
+- the width of part affine field and sigma, and all other configration in the [config.py](https://github.com/li-haoran/mxnet-cmu_pose/blob/master/config.py).
+
 ## Thanks
 [mxnet_Realtime_Multi-Person_Pose_Estimation](https://github.com/dragonfly90/mxnet_Realtime_Multi-Person_Pose_Estimation) model_file ,and some others.
 
